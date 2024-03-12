@@ -156,3 +156,43 @@ class _WeatherAppState extends State<WeatherApp> {
               ),
             ],
           ),
+           SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.cloud),
+              SizedBox(width: 8),
+              Text('Clouds: $clouds%', style: TextStyle(fontSize: 18)),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.opacity),
+              SizedBox(width: 8),
+              Text('Humidity: $humidity%', style: TextStyle(fontSize: 18)),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.air),
+              SizedBox(width: 8),
+              Text('Wind Speed: ${windSpeed.toStringAsFixed(2)} m/s', style: TextStyle(fontSize: 18)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool isDay(int sunriseTimestamp, int sunsetTimestamp) {
+    DateTime sunrise = DateTime.fromMillisecondsSinceEpoch(sunriseTimestamp * 1000);
+    DateTime sunset = DateTime.fromMillisecondsSinceEpoch(sunsetTimestamp * 1000);
+    DateTime now = DateTime.now();
+
+    return now.isAfter(sunrise) && now.isBefore(sunset);
+  }
+}
