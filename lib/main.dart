@@ -66,3 +66,26 @@ class _WeatherAppState extends State<WeatherApp> {
                 ],
               ),
             ),
+            SizedBox(height: 20),
+            FutureBuilder(
+              future: fetchWeatherData(locationController.text),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else {
+                  var weatherData = snapshot.data;
+                  return displayWeather(weatherData!);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
