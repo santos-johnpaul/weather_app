@@ -89,3 +89,70 @@ class _WeatherAppState extends State<WeatherApp> {
       ),
     );
   }
+  Future<Map<String, dynamic>> fetchWeatherData(String location) async {
+    String requestUrl = '$apiUrl?q=$location&appid=$apiKey';
+
+    final response = await http.get(Uri.parse(requestUrl));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load weather data');
+    }
+  }
+
+  Widget displayWeather(Map<String, dynamic> weatherData) {
+    String cityName = weatherData['name'];
+    double temperature = weatherData['main']['temp'] - 273.15;
+    int sunriseTimestamp = weatherData['sys']['sunrise'];
+    int sunsetTimestamp = weatherData['sys']['sunset'];
+    bool isDayTime = isDay(sunriseTimestamp, sunsetTimestamp);
+    int clouds = weatherData['clouds']['all'];
+    int humidity = weatherData['main']['humidity'];
+    double windSpeed = weatherData['wind']['speed'];
+    String weatherCondition = weatherData['weather'][0]['main'];
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.location_city),
+              SizedBox(width: 8),
+              Text('$cityName Weather', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.thermostat),
+              SizedBox(width: 8),
+              Text('Temperature: ${temperature.toStringAsFixed(1)}°C', style: TextStyle(fontSize: 18)),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              isDayTime
+                  ? Icon(Icons.wb_sunny)
+                  : weatherCondition == 'Rain'
+                  ? Icon(Icons.beach_access)
+                  : weatherCondition == 'Thunderstorm'
+                  ? Icon(Icons.flash_on)
+                  : Icon(Icons.nightlight_round),
+              SizedBox(width: 8),
+              Text(
+                isDayTime
+                    ? 'Daytime'
+                    : weatherCondition == 'Rain'
+                    ? 'Rainy'
+                    : weatherCondition == 'Thunderstorm'
+                    ? 'Thunderstorm'
+                    : 'Nighttime',
+                style: TextStyle(fontSize: 18),
+              ),
+            ],
+          ),
